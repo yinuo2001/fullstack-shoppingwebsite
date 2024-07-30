@@ -10,7 +10,7 @@ const Home = () => {
   const [products, setProducts] = useState(null);
   const [cartCount, setCartCount] = useState(0);
   const { isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
-  const [location, setLocation] = useState("Loading loaction...");
+  const [location, setLocation] = useState("Loading location...");
 
   const images = [
     "res/home-slider-01.webp",
@@ -21,20 +21,26 @@ const Home = () => {
 
   useEffect(() => {
     const fetchLocation = async () => {
+      const options = {
+        method: 'GET',
+        url: 'https://ip-geo-location.p.rapidapi.com/ip/check',
+        params: {
+          format: 'json',
+          language: 'en'
+        },
+        headers: {
+          'x-rapidapi-key': process.env.REACT_APP_RAPIDAPI_KEY,
+          'x-rapidapi-host': 'ip-geo-location.p.rapidapi.com'
+        }
+      };
+    
       try {
-        const response = await axios.get("https://ip-geo-location.p.rapidapi.com/ip/check", {
-          params: {
-            format: "json",
-            language: "en"
-          },
-          headers: {
-            "x-rapidapi-host": "ip-geo-location.p.rapidapi.com",
-            "x-rapidapi-key": "d8e95598bemsha589a9890d257c6p1488b7jsna83091ed24fc"
-          }
-        });
-        setLocation(`${response.data.city.name}, ${response.data.country.name}`);
+        const response = await axios.request(options);
+        const { city, country } = response.data;
+        setLocation(`${city.name}, ${country.name}`);
       } catch (error) {
-        console.error("Error fetching location data:", error);
+        console.error('Error fetching location data:', error);
+        setLocation("Unable to load location");
       }
     };
 
@@ -68,7 +74,7 @@ const Home = () => {
         <div className="topbar-content">
           <div className="location">
             <i className="fas fa-map-marker-alt"></i>
-            <a href="#">{Location}</a>
+            <span>{location}</span>
           </div>
           <ul className="shortcut-menu">
             <li>
@@ -109,9 +115,9 @@ const Home = () => {
 
       {/* Navigation Bar */}
       <nav className="nav">
-        <a href="#">Flash Sale</a>
         <a href="#">Fashion</a>
         <a href="#">High Jewelry</a>
+        <Link to="/comment">Comment</Link>
       </nav>
 
       {/* Image Slider */}
@@ -130,6 +136,7 @@ const Home = () => {
           <i className="fas fa-angle-right"></i>
         </button>
       </div>
+
 
       {/* Footer */}
       <footer className="footer">
