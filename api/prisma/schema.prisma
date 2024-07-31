@@ -27,6 +27,7 @@ model Product {
   description String
   price       Float
   stock       Int
+  picture     String
   comments    Comment[]
 }
 
