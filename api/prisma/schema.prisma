@@ -32,7 +32,6 @@ model Product {
 
 model Comment {
   id        Int      @id @default(autoincrement())
-  productId Int
   userId    Int
   text      String
   User      User     @relation(fields: [userId], references: [id])
