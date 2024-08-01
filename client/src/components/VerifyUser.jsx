@@ -8,20 +8,28 @@ export default function VerifyUser() {
 
   useEffect(() => {
     async function verifyUser() {
-      // make a call to our API to verify the user in our database, if it doesn't exist we'll insert it into our database
-      // finally we'll redirect the user to the /app route
-      const data = await fetch(`${process.env.REACT_APP_API_URL}/verify-user`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const user = await data.json();
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/verify-user`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
 
-      // TODO: redirect here to where the user should go after verifying their account
-      if (user.auth0Id) {
-        navigate("/");
+        if (!response.ok) {
+          throw new Error("Error verifying user");
+        }
+
+        const user = await response.json();
+
+        if (user.auth0Id) {
+          navigate("/");
+        } else {
+          console.error("User verification failed");
+        }
+      } catch (error) {
+        console.error("Failed to verify user:", error);
       }
     }
 
@@ -39,7 +47,7 @@ export default function VerifyUser() {
         errors.
       </p>
       <p>
-        Check also your api terminal for any errors in the POST /verify-user
+        Check also your API terminal for any errors in the POST /verify-user
         route.
       </p>
     </div>

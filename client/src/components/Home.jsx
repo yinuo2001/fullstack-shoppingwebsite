@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../css/Home.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const Home = () => {
@@ -11,6 +11,7 @@ const Home = () => {
   const [cartCount, setCartCount] = useState(0);
   const { isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
   const [location, setLocation] = useState("Loading location...");
+  const navigate = useNavigate();
 
   const images = [
     "res/home-slider-01.webp",
@@ -86,7 +87,7 @@ const Home = () => {
               </div>
             </li>
             {!isAuthenticated ? (
-              <li><button className="login-btn" onClick={loginWithRedirect}>
+              <li><button className="login-btn" onClick={() => loginWithRedirect()}>
                 <i className="fas fa-user"></i>
                 <span className="login-text">Login</span>
                 </button>
@@ -95,6 +96,7 @@ const Home = () => {
               <>
                 <li><span>Hello, {user.given_name}</span></li>
                 <li><button className="logout-btn" onClick={() => logout({ returnTo: window.location.origin })}>Logout</button></li>
+                <li><Link to="/profile" className="profile-link">Profile</Link></li>
               </>
             )}
             <li className="shopping-bag">
@@ -115,8 +117,8 @@ const Home = () => {
 
       {/* Navigation Bar */}
       <nav className="nav">
-        <a href="#">Fashion</a>
-        <a href="#">High Jewelry</a>
+        <Link to="/fashion-products">Fashion</Link>
+        <Link to="/jewelry-products">High Jewelry</Link>
         <Link to="/comment">Comment</Link>
       </nav>
 
