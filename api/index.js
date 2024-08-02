@@ -31,15 +31,20 @@ app.get("/ping", (req, res) => {
 // Deals with Product table
 // Only Auth0 users can search for products
 app.get("/products/:name", requireAuth, async (req, res) => {
-  const { name } = req.params;
-  const products = await prisma.product.findMany({
-    where: {
-      title: {
-        contains: name,
+  try {
+    const { name } = req.params;
+    const products = await prisma.product.findMany({
+      where: {
+        name: {
+          contains: name,
+        },
       },
-    },
-  });
-  res.json(products);
+    });
+    res.json(products);
+  }
+  catch (error) {
+    res.status(500).json({ error: "Error occurred when fetching products" });
+  }
 });
 
 // A list of all products are displayed to all users
