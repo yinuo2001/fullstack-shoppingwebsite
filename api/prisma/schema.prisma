@@ -17,23 +17,23 @@ model User {
   id           Int      @id @default(autoincrement())
   email        String   @unique
   auth0Id      String   @unique @default("")
-  name         String?
+  name         String?  @db.VarChar(255)
   comments     Comment[]
 }
 
 model Product {
   id          Int      @id @default(autoincrement())
-  name        String
-  description String
+  name        String   @db.VarChar(255)
+  description String   @db.Text
   price       Float
   stock       Int
-  picture     String
+  picture     String   @db.VarChar(255)
 }
 
 model Comment {
   id        Int      @id @default(autoincrement())
   userId    Int
-  text      String
+  text      String   @db.Text
   User      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
