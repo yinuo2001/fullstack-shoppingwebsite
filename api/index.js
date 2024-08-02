@@ -121,16 +121,17 @@ app.get("/verify-user", requireAuth, async (req, res) => {
 });
 
 // Auth0 users can update their user information
-app.put("/verify-user/:id", requireAuth, async (req, res) => {
-  const id = req.params.id;
+app.put("/verify-user", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
-  const { email, name } = req.body;
+  const { name } = req.body;
+  if (!name) {
+    return res.status(400).json({ error: "name cannot be empty" });
+  }
   const user = await prisma.user.update({
     where: {
       auth0Id: auth0Id,
     },
     data: {
-      email: email,
       name: name,
     },
   });
