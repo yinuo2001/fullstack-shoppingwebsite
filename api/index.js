@@ -31,20 +31,15 @@ app.get("/ping", (req, res) => {
 // Deals with Product table
 // Only Auth0 users can search for products
 app.get("/products/:name", requireAuth, async (req, res) => {
-  try {
-    const { name } = req.params;
-    const products = await prisma.product.findMany({
-      where: {
-        name: {
-          contains: name,
-        },
+  const { name } = req.params;
+  const products = await prisma.product.findMany({
+    where: {
+      name: {
+        contains: name,
       },
-    });
-    res.json(products);
-  }
-  catch (error) {
-    res.status(500).json({ error: "Error occurred when fetching products" });
-  }
+    },
+  });
+  res.json(products);
 });
 
 // A list of all products are displayed to all users
@@ -62,26 +57,22 @@ app.get("/comments", async (req, res) => {
 
 // Auth0 users can add a comment
 app.post("/comments", requireAuth, async (req, res) => {
-  const { text } = req.body;
+  const { text, email } = req.body;
   const auth0Id = req.auth.payload.sub;
   const user = await prisma.user.findUnique({
     where: {
-      auth0Id,
+      email: email,
     },
   });
-
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
   const comment = await prisma.comment.create({
     data: {
       userId: user.id,
       text,
-      user: {
-        connect: {
-          id: user.id,
-        },
-      },
     },
   });
-
   res.json(comment);
 });
 
