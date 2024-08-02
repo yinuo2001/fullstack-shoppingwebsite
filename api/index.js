@@ -58,7 +58,6 @@ app.get("/comments", async (req, res) => {
 // Auth0 users can add a comment
 app.post("/comments", requireAuth, async (req, res) => {
   const { text, email } = req.body;
-  const auth0Id = req.auth.payload.sub;
   const user = await prisma.user.findUnique({
     where: {
       email: email,
@@ -81,16 +80,21 @@ app.delete("/comments/:id", requireAuth, async (req, res) => {
   const { id } = req.params;
   const auth0Id = req.auth.payload.sub;
 
-  const comment = await prisma.comment.findUnique({
+  const comment = prisma.comment.findUnique({
     where: {
       id: parseInt(id),
     },
-    include: {
-      user: true,
+  });
+  if (!comment) {
+    return res.status(404).json({ error: "Comment not found" });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      auth0Id,
     },
   });
-
-  if (comment.user.auth0Id !== auth0Id) {
+  if (user.id !== comment.User.userId) {
     return res.status(403).json({ error: "You can't delete this comment" });
   }
 
@@ -99,7 +103,6 @@ app.delete("/comments/:id", requireAuth, async (req, res) => {
       id: parseInt(id),
     },
   });
-
   res.json({ message: "Comment deleted" });
 });
 
@@ -110,7 +113,7 @@ app.get("/verify-user", requireAuth, async (req, res) => {
 
   const user = await prisma.user.findUnique({
     where: {
-      auth0Id,
+      auth0Id: auth0Id,
     },
   });
 
@@ -118,26 +121,18 @@ app.get("/verify-user", requireAuth, async (req, res) => {
 });
 
 // Auth0 users can update their user information
-app.put("/verify-user", requireAuth, async (req, res) => {
+app.put("/verify-user/:id", requireAuth, async (req, res) => {
+  const id = req.params.id;
   const auth0Id = req.auth.payload.sub;
   const { email, name } = req.body;
   const user = await prisma.user.update({
     where: {
-      auth0Id,
+      auth0Id: auth0Id,
     },
     data: {
-      email,
-      name,
+      email: email,
+      name: name,
     },
-  });
-  res.json(user);
-});
-
-// Auth0 users can delete their account
-app.delete("/verify-user", requireAuth, async (req, res) => {
-  const auth0Id = req.auth.payload.sub;
-  const user = await prisma.user.delete({
-    where: { auth0Id },
   });
   res.json(user);
 });
