@@ -8,6 +8,7 @@ import FashionList from "./components/FashionList";
 import JewelryList from "./components/JewelryList";
 import ProductDetails from "./components/ProductDetails";
 import Comment from "./components/Comment";
+import { AuthTokenProvider } from "./AuthTokenContext";
 
 function App() {
   return (
@@ -17,17 +18,19 @@ function App() {
       redirectUri={`${window.location.origin}/verify-user`}
       audience={process.env.REACT_APP_AUTH0_AUDIENCE}
     >
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/verify-user" element={<VerifyUser />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/fashion-products" element={<FashionList />} />
-          <Route path="/jewelry-products" element={<JewelryList />} />
-          <Route path="/product/:id" element={<ProductDetails />} />
-          <Route path="/comment" element={<Comment />} />
-        </Routes>
-      </Router>
+      <AuthTokenProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/verify-user" element={<VerifyUser />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/fashion-products" element={<FashionList />} />
+            <Route path="/jewelry-products" element={<JewelryList />} />
+            <Route path="/product/:id" element={<ProductDetails />} />
+            <Route path="/comment" element={<Comment />} />
+          </Routes>
+        </Router>
+      </AuthTokenProvider>  
     </Auth0Provider>
   );
 }
