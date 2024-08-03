@@ -47,14 +47,24 @@ const Home = () => {
 
     fetchLocation();
 
-    // 需修改 
-    if (!isAuthenticated) {
-      fetch("/api/products")
-        .then(res => res.json())
-        .then(data => {
+
+    if (isAuthenticated) {
+      const fetchProducts = async () => {
+        try {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/products`);
+          if (!response.ok) throw new Error('Network response was not ok.');
+          const data = await response.json();
           setProducts(data);
           setCartCount(data.length);
-        });
+        } catch (error) {
+          console.error('Error fetching products:', error);
+        }
+      };
+
+      fetchProducts();
+    } else {
+      setProducts(null);
+      setCartCount(0);
     }
   }, [isAuthenticated]);
 
