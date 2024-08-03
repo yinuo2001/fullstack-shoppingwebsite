@@ -123,11 +123,19 @@ app.get("/verify-user", requireAuth, async (req, res) => {
 // Auth0 users can update their user information
 app.put("/verify-user", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
+  const user = await prisma.user.findUnique({
+    where: {
+      auth0Id: auth0Id,
+    },
+  });
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
   const { name } = req.body;
   if (!name) {
     return res.status(400).json({ error: "name cannot be empty" });
   }
-  const user = await prisma.user.update({
+  user = await prisma.user.update({
     where: {
       auth0Id: auth0Id,
     },
