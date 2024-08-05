@@ -28,16 +28,24 @@ app.get("/ping", (req, res) => {
   res.send("pong");
 });
 
-
-// Fetch a single product by its ID
+// Deals with Product table
+// Users can see a specific product
 app.get("/products/:id", async (req, res) => {
-  const { id } = req.params;
-  const products = await prisma.product.findUnique({
-    where: {
-      id: parseInt(id),
-    },
-  });
-  res.json(products);
+  try { 
+    const { id } = req.params;
+    const product = await prisma.product.findUnique({
+      where: {
+        id: parseInt(id, 10),
+      },
+    });
+    if (product) {
+      res.json(product);
+    } else {
+      res.status(404).json({ error: "Product not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 // A list of all products are displayed to all users
