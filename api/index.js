@@ -39,7 +39,7 @@ app.get("/products/:id", async (req, res) => {
       },
     });
     if (product) {
-      res.json(products);
+      res.json(product);
     } else {
       res.status(404).json({ error: "Product not found" });
     }
