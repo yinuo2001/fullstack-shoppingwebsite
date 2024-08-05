@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Auth0Provider } from "@auth0/auth0-react";
+import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import Home from "./components/Home";
 import VerifyUser from "./components/VerifyUser";
 import Profile from "./components/Profile";
@@ -11,6 +11,22 @@ import Comment from "./components/Comment";
 import { AuthTokenProvider } from "./AuthTokenContext";
 
 function App() {
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(isAuthenticated);
+  }, [isAuthenticated]);
+
+  const addToCart = (product) => {
+    if (isLoggedIn) {
+      console.log(`Product added to cart: ${product.name}`);
+    } else {
+      alert('Please log in to add items to the cart.');
+      loginWithRedirect();
+    }
+  };
+
   return (
     <Auth0Provider
       domain={process.env.REACT_APP_AUTH0_DOMAIN}
@@ -26,7 +42,10 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/fashion-products" element={<FashionList />} />
             <Route path="/jewelry-products" element={<JewelryList />} />
-            <Route path="/product/:id" element={<ProductDetails />} />
+            <Route 
+              path="/products/:id" 
+              element={<ProductDetails isLoggedIn={isLoggedIn} addToCart={addToCart} />} 
+            />
             <Route path="/comment" element={<Comment />} />
           </Routes>
         </Router>

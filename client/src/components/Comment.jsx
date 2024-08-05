@@ -25,7 +25,7 @@ const Comments = () => {
   const handlePostComment = async () => {
     if (isAuthenticated) {
       try {
-        await axios.post("/api/comments", { comment: newComment });
+        await axios.post("/api/comments", { text: newComment });
         setNewComment("");
         const response = await axios.get("/api/comments");
         setComments(response.data);
@@ -33,7 +33,8 @@ const Comments = () => {
         console.error("Error posting comment:", error);
       }
     } else {
-      loginWithRedirect();
+      alert("You need to log in to post a comment."); // 弹出提示框
+      loginWithRedirect(); // 重定向到登录页
     }
   };
 
@@ -54,7 +55,7 @@ const Comments = () => {
         <textarea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Please log in to comment..."
+          placeholder={isAuthenticated ? "Write your comment here..." : "Please log in to comment..."}
         ></textarea>
         <button onClick={handlePostComment}>Post</button>
       </div>

@@ -28,15 +28,13 @@ app.get("/ping", (req, res) => {
   res.send("pong");
 });
 
-// Deals with Product table
-// Only Auth0 users can search for products
-app.get("/products/:name", requireAuth, async (req, res) => {
-  const { name } = req.params;
-  const products = await prisma.product.findMany({
+
+// Fetch a single product by its ID
+app.get("/products/:id", async (req, res) => {
+  const { id } = req.params;
+  const products = await prisma.product.findUnique({
     where: {
-      name: {
-        contains: name,
-      },
+      id: parseInt(id),
     },
   });
   res.json(products);

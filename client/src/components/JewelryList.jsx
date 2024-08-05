@@ -39,7 +39,6 @@ const JewelryList = () => {
         const response = await axios.get('http://localhost:8000/products');
         const filteredProducts = response.data.filter(product => product.id >= 13);
         setProducts(filteredProducts);
-        setCartCount(filteredProducts.length);
       } catch (error) {
         console.error("Error fetching jewelry products:", error);
       }
