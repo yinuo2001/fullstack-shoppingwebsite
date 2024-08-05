@@ -32,24 +32,6 @@
     text-decoration: underline;
 }
 
-.search-bar {
-    display: flex;
-}
-  
-.search-bar input {
-    border: 1px solid #ddd;
-    padding: 5px;
-    border-radius: 4px;
-}
-  
-.search-btn {
-    background-color: #f4f4f4;
-    border: 1px solid #ddd;
-    padding: 5px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
 .login-btn {
     position: relative;
     background-color: transparent;

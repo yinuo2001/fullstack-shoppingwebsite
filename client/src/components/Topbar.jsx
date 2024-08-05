@@ -15,14 +15,6 @@ const Topbar = ({ location, cartCount, loginWithRedirect, logout, user }) => {
           <span>{location}</span>
         </div>
         <ul className="shortcut-menu">
-          <li>
-            <div className="search-bar">
-              <input type="text" placeholder="Search..." />
-              <button className="search-btn">
-                <i className="fas fa-search"></i>
-              </button>
-            </div>
-          </li>
           {!isAuthenticated ? (
             <li>
               <button className="login-btn" onClick={() => loginWithRedirect()}>
