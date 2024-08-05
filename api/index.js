@@ -29,17 +29,23 @@ app.get("/ping", (req, res) => {
 });
 
 // Deals with Product table
-// Only Auth0 users can search for products
-app.get("/products/:name", requireAuth, async (req, res) => {
-  const { name } = req.params;
-  const products = await prisma.product.findMany({
-    where: {
-      name: {
-        contains: name,
+// Users can see a specific product
+app.get("/products/:id", async (req, res) => {
+  try { 
+    const { id } = req.params;
+    const products = await prisma.product.findUnique({
+      where: {
+        id: parseInt(id, 10),
       },
-    },
-  });
-  res.json(products);
+    });
+    if (product) {
+      res.json(products);
+    } else {
+      res.status(404).json({ error: "Product not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 // A list of all products are displayed to all users
