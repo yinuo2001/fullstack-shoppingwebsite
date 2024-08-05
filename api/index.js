@@ -33,7 +33,7 @@ app.get("/ping", (req, res) => {
 app.get("/products/:id", async (req, res) => {
   try { 
     const { id } = req.params;
-    const products = await prisma.product.findUnique({
+    const product = await prisma.product.findUnique({
       where: {
         id: parseInt(id, 10),
       },
