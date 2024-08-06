@@ -34,11 +34,11 @@ const Topbar = ({ location, cartCount, loginWithRedirect, logout, user }) => {
             </>
           )}
           <li className="shopping-bag">
-            <a href="/shopping-cart">
+            <Link to="/shopping-cart" className="shopping-bag-link">
               <i className="fas fa-shopping-bag"></i>
               <span className="bag-count">{cartCount}</span> {/* Display cart count */}
               <span className="tooltip">Shopping Bag</span>
-            </a>
+            </Link>
           </li>
         </ul>
       </div>
