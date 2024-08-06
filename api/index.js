@@ -126,6 +126,41 @@ app.get("/verify-user", requireAuth, async (req, res) => {
   res.json(user);
 });
 
+// Auth0 users can get the products in their shopping cart
+app.get("/verify-user/products", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
+  const user = await prisma.user.findUnique({
+    where: {
+      auth0Id: auth0Id,
+    },
+  });
+  res.json(user.products);
+});
+
+// Auth0 users can add a product to their shopping cart
+app.put("/verify-user/products", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
+  const user = await prisma.user.update({
+    where: {
+      auth0Id: auth0Id,
+    },
+    data: {
+      products: {
+        connect: {
+          id: productId
+        }
+      }
+    }
+  });
+  const { productId } = req.body;
+  const product = await prisma.product.findUnique({
+    where: {
+      id: productId,
+    },
+  });
+  res.json(user);
+});
+
 // Auth0 users can update their user information
 app.put("/verify-user", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
