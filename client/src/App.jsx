@@ -9,6 +9,7 @@ import FashionList from "./components/FashionList";
 import JewelryList from "./components/JewelryList";
 import ProductDetails from "./components/ProductDetails";
 import Comment from "./components/Comment";
+import ShoppingCart from "./components/ShoppingCart";
 import { AuthTokenProvider } from "./AuthTokenContext";
 
 function App() {
@@ -61,6 +62,7 @@ function App() {
               element={<ProductDetails isLoggedIn={isLoggedIn} addToCart={addToCart} />} 
             />
             <Route path="/comment" element={<Comment />} />
+            <Route path="/shopping-cart" element={<ShoppingCart />} />
           </Routes>
         </Router>
       </AuthTokenProvider>  
