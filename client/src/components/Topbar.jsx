@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -7,6 +7,7 @@ import '../css/Topbar.css';
 const Topbar = ({ location, cartCount, loginWithRedirect, logout, user }) => {
   const { isAuthenticated } = useAuth0();
   const navigate = useNavigate();
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const handleShoppingBagClick = () => {
     if (isAuthenticated) {
@@ -14,6 +15,11 @@ const Topbar = ({ location, cartCount, loginWithRedirect, logout, user }) => {
     } else {
       loginWithRedirect();
     }
+  };
+
+  const handleLogout = () => {
+    logout({ returnTo: window.location.origin });
+    setProfileOpen(false);
   };
 
   return (
@@ -33,13 +39,21 @@ const Topbar = ({ location, cartCount, loginWithRedirect, logout, user }) => {
             </li>
           ) : (
             <>
-              <li><span>Hello, {user?.given_name}</span></li>
-              <li>
-                <button className="logout-btn" onClick={() => logout({ returnTo: window.location.origin })}>
-                  Logout
+              <li className="user-info">
+                <button className="avatar-btn" onClick={() => setProfileOpen(!profileOpen)}>
+                  <img src="https://img.ixintu.com/download/jpg/201912/a875dd9e8abebbaeee28ef1bfd01d16f.jpg!ys" alt="User Avatar" className="user-avatar" />
                 </button>
+                {profileOpen && (
+                  <div className="profile-menu">
+                    <span className="user-name">Hello, {user.name.split('@')[0]}</span>
+                    <Link to="/profile" className="profile-link" onClick={() => setProfileOpen(false)}>
+                    <i className="fa-sharp fa-regular fa-user profile-icon"></i> My Profile</Link>
+                    <button className="logout-btn" onClick={handleLogout}>
+                      <i className="fas fa-sign-out-alt logout-icon"></i> Log out
+                    </button>
+                  </div>
+                )}
               </li>
-              <li><Link to="/profile" className="profile-link">Profile</Link></li>
             </>
           )}
           <li className="shopping-bag">
