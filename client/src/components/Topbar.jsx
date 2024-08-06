@@ -1,11 +1,20 @@
 import React from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../css/Topbar.css';
 
 const Topbar = ({ location, cartCount, loginWithRedirect, logout, user }) => {
   const { isAuthenticated } = useAuth0();
+  const navigate = useNavigate();
+
+  const handleShoppingBagClick = () => {
+    if (isAuthenticated) {
+      navigate("/shopping-cart");
+    } else {
+      loginWithRedirect();
+    }
+  };
 
   return (
     <div className="topbar">
@@ -34,11 +43,11 @@ const Topbar = ({ location, cartCount, loginWithRedirect, logout, user }) => {
             </>
           )}
           <li className="shopping-bag">
-            <Link to="/shopping-cart" className="shopping-bag-link">
+            <a href="#" onClick={handleShoppingBagClick} className="shopping-bag-link">
               <i className="fas fa-shopping-bag"></i>
               <span className="bag-count">{cartCount}</span> {/* Display cart count */}
               <span className="tooltip">Shopping Bag</span>
-            </Link>
+            </a>
           </li>
         </ul>
       </div>
