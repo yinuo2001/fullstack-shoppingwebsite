@@ -24,7 +24,7 @@ const Topbar = ({ location, cartCount, loginWithRedirect, logout, user }) => {
             </li>
           ) : (
             <>
-              <li><span>Hello, {user.given_name}</span></li>
+              <li><span>Hello, {user?.given_name}</span></li>
               <li>
                 <button className="logout-btn" onClick={() => logout({ returnTo: window.location.origin })}>
                   Logout
@@ -34,7 +34,7 @@ const Topbar = ({ location, cartCount, loginWithRedirect, logout, user }) => {
             </>
           )}
           <li className="shopping-bag">
-            <a href="#">
+            <a href="/shopping-cart">
               <i className="fas fa-shopping-bag"></i>
               <span className="bag-count">{cartCount}</span> {/* Display cart count */}
               <span className="tooltip">Shopping Bag</span>
