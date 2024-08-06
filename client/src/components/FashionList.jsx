@@ -8,6 +8,7 @@ const FashionList = () => {
   const [products, setProducts] = useState([]);
   const [location, setLocation] = useState("Loading location...");
   const [cartCount, setCartCount] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // 假设你有一个状态变量来跟踪用户是否已登录
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -41,7 +42,6 @@ const FashionList = () => {
         const response = await axios.get('http://localhost:8000/products');
         const filteredProducts = response.data.filter(product => product.id <= 12);
         setProducts(filteredProducts);
-        setCartCount(filteredProducts.length);
       } catch (error) {
         console.error("Error fetching fashion products:", error);
       }
@@ -63,7 +63,7 @@ const FashionList = () => {
         {products.map((product) => (
           <div key={product.id} className="product-card">
             <Link to={`/products/${product.id}`}>
-            <img 
+              <img 
                 src={`/${product.picture}`}
                 alt={product.name} 
                 className="product-image" 
@@ -81,5 +81,3 @@ const FashionList = () => {
 };
 
 export default FashionList;
-
-

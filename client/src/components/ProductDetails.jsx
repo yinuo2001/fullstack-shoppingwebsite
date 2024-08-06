@@ -1,38 +1,82 @@
-// src/components/ProductDetail.jsx
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import Topbar from './Topbar';
+import '../css/ProductDetails.css';
 
-
-const ProductDetail = () => {
+const ProductDetails = ({ isLoggedIn, addToCart }) => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [location, setLocation] = useState('Loading location...');
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchLocation = async () => {
+      const options = {
+        method: 'GET',
+        url: 'https://ip-geo-location.p.rapidapi.com/ip/check',
+        params: {
+          format: 'json',
+          language: 'en'
+        },
+        headers: {
+          'x-rapidapi-key': process.env.REACT_APP_RAPIDAPI_KEY,
+          'x-rapidapi-host': 'ip-geo-location.p.rapidapi.com'
+        }
+      };
+
       try {
-        const response = await axios.get(`/api/products/${id}`);
-        setProduct(response.data);
+        const response = await axios.request(options);
+        const { city, country } = response.data;
+        setLocation(`${city.name}, ${country.name}`);
       } catch (error) {
-        console.error("Error fetching product details:", error);
+        console.error('Error fetching location data:', error);
+        setLocation('Unable to load location');
       }
     };
 
+    const fetchProduct = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8000/products/${id}`);
+        console.log('Product data:', response.data);
+        setProduct(response.data);
+      } catch (error) {
+        console.error('Error fetching product data:', error);
+      }
+    };
+
+    fetchLocation();
     fetchProduct();
   }, [id]);
 
-  if (!product) {
-    return <div>加载中...</div>;
-  }
+  const handleAddToCart = () => {
+    if (isLoggedIn) {
+      addToCart(product);
+      setCartCount(cartCount + 1);
+    } else {
+      alert('Please log in to add items to the cart.');
+    }
+  };
+
+  if (!product) return <p>Loading...</p>;
 
   return (
-    <div className="product-detail">
-      <h2>{product.name}</h2>
-      <img src={product.image_path} alt={product.name} />
-      <p>{product.description}</p>
-      <p>价格: {product.price} 元</p>
+    <div className="product-details">
+      <Topbar location={location} cartCount={cartCount} />
+      <header className="header">
+        <a href="/" className="main-header">Style Haven</a>
+      </header>
+      <div className="product-container">
+        <img src={`/${product.picture}`} alt={product.name} className="product-image" />
+        <div className="product-info">
+          <h2 className="product-name">{product.name}</h2>
+          <p className="product-price">${product.price.toFixed(2)}</p>
+          <p className="product-description">{product.description}</p>
+          <button onClick={handleAddToCart} className="add-to-cart">Add to Cart</button>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default ProductDetail;
+export default ProductDetails;
