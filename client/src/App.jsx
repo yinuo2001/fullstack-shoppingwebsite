@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import Home from "./components/Home";
@@ -18,9 +19,22 @@ function App() {
     setIsLoggedIn(isAuthenticated);
   }, [isAuthenticated]);
 
-  const addToCart = (product) => {
+  const addToCart = async (product) => {
     if (isLoggedIn) {
-      console.log(`Product added to cart: ${product.name}`);
+      try {
+        // Add product to cart
+        const response = await axios.put('http://localhost:8000/verify-user/products', {
+          productId: product.id,
+        });
+        if (response.status === 200) {
+          console.log(`Product added to cart: ${product.name}`);
+        } else {
+          console.error('Failed to add product to cart:', response.status);
+          alert('Failed to add item to cart. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error adding product to cart:', error);
+      }
     } else {
       alert('Please log in to add items to the cart.');
       loginWithRedirect();
