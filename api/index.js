@@ -140,6 +140,7 @@ app.get("/verify-user/products", requireAuth, async (req, res) => {
 // Auth0 users can add a product to their shopping cart
 app.put("/verify-user/products", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
+  const { productId } = req.body;
   const user = await prisma.user.update({
     where: {
       auth0Id: auth0Id,
@@ -151,12 +152,6 @@ app.put("/verify-user/products", requireAuth, async (req, res) => {
         }
       }
     }
-  });
-  const { productId } = req.body;
-  const product = await prisma.product.findUnique({
-    where: {
-      id: productId,
-    },
   });
   res.json(user);
 });
