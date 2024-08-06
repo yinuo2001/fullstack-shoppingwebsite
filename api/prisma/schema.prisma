@@ -19,7 +19,7 @@ model User {
   auth0Id      String   @unique @default("")
   name         String   @db.VarChar(255)
   comments     Comment[]
-  products     Product[]
+  products     Product[] @relation("UserProducts")
 }
 
 model Product {
@@ -29,8 +29,7 @@ model Product {
   price       Float
   stock       Int
   picture     String   @db.VarChar(255)
-  userId      Int
-  User        User     @relation(fields: [userId], references: [id])
+  users       User[]     @relation("UserProducts")
 }
 
 model Comment {
