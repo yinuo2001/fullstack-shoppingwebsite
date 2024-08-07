@@ -4,11 +4,10 @@ import { useParams } from 'react-router-dom';
 import Topbar from './Topbar';
 import '../css/ProductDetails.css';
 
-const ProductDetails = ({ isLoggedIn, addToCart }) => {
+const ProductDetails = ({ isLoggedIn, addToCart, cartCount, setCartCount }) => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [location, setLocation] = useState('Loading location...');
-  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -49,10 +48,14 @@ const ProductDetails = ({ isLoggedIn, addToCart }) => {
     fetchProduct();
   }, [id]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (isLoggedIn) {
-      addToCart(product);
-      setCartCount(cartCount + 1);
+      try {
+        await addToCart(product);
+        setCartCount(cartCount + 1);
+      } catch (error) {
+        console.error('Error adding item to cart:', error);
+      }
     } else {
       alert('Please log in to add items to the cart.');
     }
