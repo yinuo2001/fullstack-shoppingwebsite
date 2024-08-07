@@ -3,12 +3,13 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import "../css/FashionList.css";
 import Topbar from "./Topbar";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const FashionList = () => {
+  const { isAuthenticated, loginWithRedirect, getAccessTokenSilently } = useAuth0();
   const [products, setProducts] = useState([]);
   const [location, setLocation] = useState("Loading location...");
   const [cartCount, setCartCount] = useState(0);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 假设你有一个状态变量来跟踪用户是否已登录
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -50,6 +51,29 @@ const FashionList = () => {
     fetchProducts();
   }, []);
 
+  const addToCart = async (productId) => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+      return;
+    }
+
+    try {
+      const token = await getAccessTokenSilently();
+      await axios.put(
+        'http://localhost:8000/verify-user/products',
+        { productId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setCartCount(cartCount + 1);
+    } catch (error) {
+      console.error("Error adding product to cart:", error);
+    }
+  };
+
   return (
     <div className="fashion-list">
       <Topbar location={location} cartCount={cartCount} />
@@ -73,6 +97,12 @@ const FashionList = () => {
                 <p className="product-price">${product.price.toFixed(2)}</p>
               </div>
             </Link>
+            <button 
+              className="add-to-cart-button"
+              onClick={() => addToCart(product.id)}
+            >
+              Add to Cart
+            </button>
           </div>
         ))}
       </div>
