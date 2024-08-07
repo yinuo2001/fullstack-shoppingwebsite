@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Topbar from "./Topbar";
-import '../css/ShoppingCart.css';
+import "../css/ShoppingCart.css";
 
-const ShoppingCart = ({ cartItems }) => {
+
+const ShoppingCart = ({ cartItems, setCartItems }) => {
   const [products, setProducts] = useState([]);
   const [location, setLocation] = useState("Loading location...");
   const [cartCount, setCartCount] = useState(0);
@@ -51,31 +52,45 @@ const ShoppingCart = ({ cartItems }) => {
     fetchProducts();
   }, [cartItems]);
 
+  // Handle remove product from cart
+  const handleRemoveProduct = async (productId) => {
+    try {
+      await axios.post('http://localhost:8000/verify-user/remove-from-cart', { productId });
+      setCartItems(cartItems.filter(id => id !== productId));
+    } catch (error) {
+      console.error("Error removing product from the cart:", error);
+    }
+  };
+
   return (
-    <div className="product-details">
+    <div className="shopping-cart">
       <Topbar location={location} cartCount={cartCount} />
+      
+      {/* header */}
       <header className="header">
-        <a href="/" className="main-header">Style Haven</a>
-        <div className="cart-container">
-          {products.length === 0 ? (
-            <p>The cart is empty</p>
-          ) : (
-            <div className="cart-items">
-              {products.map((product) => (
-                <div key={product.id} className="cart-item">
-                  <img src={product.image} alt={product.name} />
-                  <div>
-                    <h3>{product.name}</h3>
-                    <p>${product.price}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <Link to="/" className="main-header">Style Haven</Link>
       </header>
+
+      <div className="cart-container">
+        {products.length === 0 ? (
+          <p>The cart is empty</p>
+        ) : (
+          <div className="cart-items">
+            {products.map((product) => (
+              <div key={product.id} className="cart-item">
+                <img src={product.picture} alt={product.name} />
+                <div>
+                  <h3>{product.name}</h3>
+                  <p>${product.price}</p>
+                </div>
+                <button onClick={() => handleRemoveProduct(product.id)}>Remove</button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
-  )
+  );
 }
 
 export default ShoppingCart;
