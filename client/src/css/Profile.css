@@ -70,22 +70,6 @@
   background-color: #555;
 }
 
-.comments-list {
-  margin-top: 20px;
-}
-
-.comment-item {
-  background-color: #f9f9f9;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-}
-
-.comment-item p {
-  margin: 0;
-}
-
 hr {
   border: 0;
   height: 1px;
