@@ -10,6 +10,7 @@ import JewelryList from "./components/JewelryList";
 import ProductDetails from "./components/ProductDetails";
 import Comment from "./components/Comment";
 import ShoppingCart from "./components/ShoppingCart";
+import AuthDebugger from "./components/AuthDebugger";
 import { AuthTokenProvider } from "./AuthTokenContext";
 
 function App() {
@@ -63,6 +64,7 @@ function App() {
             />
             <Route path="/comment" element={<Comment />} />
             <Route path="/shopping-cart" element={<ShoppingCart />} />
+            <Route path="/auth-debugger" element={<AuthDebugger />} />
           </Routes>
         </Router>
       </AuthTokenProvider>  
