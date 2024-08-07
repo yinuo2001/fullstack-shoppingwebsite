@@ -4,30 +4,30 @@
     border-bottom: 1px solid #ddd;
     padding: 2px 0;
 }
-  
+
 .topbar-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
 }
-  
+
 .location {
     font-size: 14px;
 }
-  
+
 .shortcut-menu {
     list-style: none;
     display: flex;
     gap: 15px;
     align-items: center;
 }
-  
+
 .shortcut-menu li a {
     color: #333;
     text-decoration: none;
 }
-  
+
 .shortcut-menu li a:hover {
     text-decoration: underline;
 }
@@ -40,8 +40,8 @@
     font-size: 20px;
     cursor: pointer;
     padding: 10px;
-  }
-  
+}
+
 .login-btn .login-text {
     position: absolute;
     right: 100%;
@@ -56,16 +56,16 @@
     transition: opacity 0.3s ease, transform 0.3s ease;
     font-size: 14px;
 }
-  
+
 .login-btn:hover .login-text {
     opacity: 1;
     transform: translateX(15px) translateY(-50%);
 }
-  
+
 .login-btn:hover i {
     color: #007bff;
 }
-  
+
 .login-btn i {
     font-size: 20px;
 }
@@ -97,7 +97,7 @@
 .profile-menu {
     position: absolute;
     top: 50px;
-    right: 50px;
+    right: 20px;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 15px;
@@ -113,7 +113,6 @@
     font-weight: bold;
     margin-bottom: 10px;
     text-align: center;
-
 }
 
 .profile-link {
@@ -142,19 +141,17 @@
     padding: 10px;
 }
 
-  
 .profile-link:hover, .logout-btn:hover {
-    background-color:transparent;
+    background-color: transparent;
     color: darkgray;
 }
-
 
 .shopping-bag {
     position: relative;
     display: flex;
     align-items: center;
 }
-  
+
 .shopping-bag a {
     display: flex;
     align-items: center;
@@ -162,7 +159,7 @@
     color: #333;
     text-decoration: none;
 }
-  
+
 .shopping-bag .bag-count {
     background: #007bff;
     color: #fff;
@@ -174,7 +171,7 @@
     top: -5px;
     right: -10px;
 }
-  
+
 .shopping-bag .tooltip {
     display: none;
     position: absolute;
@@ -188,9 +185,96 @@
     font-size: 12px;
     white-space: nowrap;
 }
-  
-  .shopping-bag:hover .tooltip {
+
+.shopping-bag:hover .tooltip {
     display: block;
-  }
-  
-   
+}
+
+@media (max-width: 1200px) {
+    .topbar-content {
+        padding: 0 10px;
+    }
+
+    .profile-menu {
+        right: 10px;
+        width: 120px;
+    }
+}
+
+@media (max-width: 768px) {
+    .topbar-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .shortcut-menu {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .login-btn {
+        font-size: 18px;
+    }
+
+    .login-btn .login-text {
+        font-size: 12px;
+    }
+
+    .user-info {
+        gap: 5px;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .profile-menu {
+        width: 100px;
+        top: 60px;
+        right: 10px;
+    }
+
+    .shopping-bag a {
+        font-size: 18px;
+    }
+
+    .shopping-bag .bag-count {
+        font-size: 8px;
+        padding: 1px 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .topbar-content {
+        padding: 0 5px;
+    }
+
+    .login-btn {
+        font-size: 16px;
+    }
+
+    .login-btn .login-text {
+        font-size: 10px;
+    }
+
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+    }
+
+    .profile-menu {
+        width: 80px;
+        top: 70px;
+        right: 5px;
+    }
+
+    .shopping-bag a {
+        font-size: 16px;
+    }
+
+    .shopping-bag .bag-count {
+        font-size: 6px;
+        padding: 1px 3px;
+    }
+}

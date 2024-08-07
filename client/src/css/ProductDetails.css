@@ -1,39 +1,39 @@
 .product-container {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 20px 100px;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
 }
 
 .product-image {
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
     height: auto;
-    margin-right: 20px;
+    margin-bottom: 20px;
 }
 
 .product-content {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    justify-content: space-between;
-    max-width: 500px;
-    position: relative;
+    align-items: center;
+    text-align: center;
+    max-width: 100%;
 }
 
 .product-name {
-    font-size: 34px;
-    margin-top: 30px;
-    margin-bottom: 20px;
+    font-size: 28px;
+    margin-top: 20px;
+    margin-bottom: 15px;
 }
 
 .product-description {
-    font-size: 18px;
-    margin-bottom: 50px;
+    font-size: 16px;
+    margin-bottom: 20px;
 }
 
 .product-price {
-    font-size: 20px;
-    margin-bottom: 30px;
+    font-size: 18px;
+    margin-bottom: 20px;
 }
 
 .add-to-cart {
@@ -42,6 +42,80 @@
     padding: 10px 20px;
     border: none;
     cursor: pointer;
-    align-self: flex-end;
-    margin-top: auto;
+    margin-top: 10px;
+}
+
+/* Media Queries */
+@media (min-width: 768px) {
+    .product-container {
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: 20px 100px;
+    }
+
+    .product-image {
+        margin-right: 20px;
+        max-width: 400px;
+    }
+
+    .product-content {
+        align-items: flex-end;
+        max-width: 500px;
+        text-align: right;
+    }
+
+    .product-name {
+        font-size: 34px;
+        margin-top: 30px;
+        margin-bottom: 20px;
+    }
+
+    .product-description {
+        font-size: 18px;
+        margin-bottom: 50px;
+    }
+
+    .product-price {
+        font-size: 20px;
+        margin-bottom: 30px;
+    }
+
+    .add-to-cart {
+        margin-top: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .product-image {
+        width: 100%;
+        max-width: none;
+        margin-right: 0;
+    }
+
+    .product-content {
+        align-items: center;
+        text-align: center;
+        max-width: 100%;
+    }
+
+    .product-name {
+        font-size: 28px;
+        margin-top: 20px;
+        margin-bottom: 15px;
+    }
+
+    .product-description {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .product-price {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .add-to-cart {
+        margin-top: 10px;
+    }
 }
