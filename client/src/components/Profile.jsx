@@ -8,7 +8,6 @@ import "../css/Profile.css";
 const Profile = () => {
   const { user, isAuthenticated, loginWithRedirect } = useAuth0();
   const [profile, setProfile] = useState(null);
-  const [comments, setComments] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [location, setLocation] = useState("Loading location...");
@@ -42,19 +41,12 @@ const Profile = () => {
     const fetchProfile = async () => {
       if (isAuthenticated) {
         try {
-          const response = await axios.get("/api/verify-user");
+          const response = await axios.get('http://localhost:8000/verify-user');
           setProfile(response.data);
           setName(response.data.name);
           setEmail(response.data.email);
         } catch (error) {
           console.error("Error fetching profile:", error);
-        }
-
-        try {
-          const response = await axios.get("/api/comments");
-          setComments(response.data.filter(comment => comment.user.email === user.email));
-        } catch (error) {
-          console.error("Error fetching comments:", error);
         }
       } else {
         loginWithRedirect();
@@ -67,8 +59,8 @@ const Profile = () => {
 
   const handleUpdateProfile = async () => {
     try {
-      await axios.put("/api/verify-user", { name, email });
-      const response = await axios.get("/api/verify-user");
+      await axios.put('http://localhost:8000/verify-user', { name, email });
+      const response = await axios.get('http://localhost:8000/verify-user');
       setProfile(response.data);
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -106,16 +98,6 @@ const Profile = () => {
                 />
                 <button className="button" onClick={handleUpdateProfile}>Update</button>
               </div>
-            </div>
-
-            <h3>My Comments</h3>
-            <div className="comments-list">
-              {comments.length > 0 ? comments.map((comment) => (
-                <div key={comment.id} className="comment-item">
-                  <p>{comment.text}</p>
-                  <hr />
-                </div>
-              )) : <p>No comments available.</p>}
             </div>
           </div>
         </section>

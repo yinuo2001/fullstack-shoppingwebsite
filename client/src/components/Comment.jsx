@@ -12,7 +12,7 @@ const Comments = () => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get("/api/comments");
+        const response = await axios.get(`http://localhost:8000/comments`);
         setComments(response.data);
       } catch (error) {
         console.error("Error fetching comments:", error);
@@ -25,15 +25,30 @@ const Comments = () => {
   const handlePostComment = async () => {
     if (isAuthenticated) {
       try {
-        await axios.post("/api/comments", { text: newComment });
+        await axios.post(`http://localhost:8000/comments`, { text: newComment });
         setNewComment("");
-        const response = await axios.get("/api/comments");
+        const response = await axios.get(`http://localhost:8000/comments`);
         setComments(response.data);
       } catch (error) {
         console.error("Error posting comment:", error);
       }
     } else {
       alert("You need to log in to post a comment.");
+      loginWithRedirect();
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (isAuthenticated) {
+      try {
+        await axios.delete(`http://localhost:8000/comments/${commentId}`);
+        const response = await axios.get(`http://localhost:8000/comments`);
+        setComments(response.data);
+      } catch (error) {
+        console.error("Error deleting comment:", error);
+      }
+    } else {
+      alert("You need to log in to delete a comment.");
       loginWithRedirect();
     }
   };
@@ -61,9 +76,12 @@ const Comments = () => {
       </div>
       <hr />
       <div className="comments-list">
-        {comments.map((comment, index) => (
-          <div key={index} className="comment-item">
+        {comments.map((comment) => (
+          <div key={comment.id} className="comment-item">
             <p><strong>{comment.user}</strong>: {comment.text}</p>
+            {isAuthenticated && comment.userId === user.sub && (
+              <button onClick={() => handleDeleteComment(comment.id)}>Delete</button>
+            )}
             <hr />
           </div>
         ))}
