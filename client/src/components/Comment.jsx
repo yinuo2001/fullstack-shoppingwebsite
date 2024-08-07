@@ -33,8 +33,8 @@ const Comments = () => {
         console.error("Error posting comment:", error);
       }
     } else {
-      alert("You need to log in to post a comment."); // 弹出提示框
-      loginWithRedirect(); // 重定向到登录页
+      alert("You need to log in to post a comment.");
+      loginWithRedirect();
     }
   };
 
