@@ -2,17 +2,18 @@ import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useAuthToken } from "../AuthTokenContext";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Topbar from "./Topbar";
 import "../css/Profile.css";
 
 const Profile = () => {
+  const navigate = useNavigate();
   const { user, isAuthenticated, logout, loginWithRedirect } = useAuth0();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [location, setLocation] = useState("Loading location...");
   const [cartCount, setCartCount] = useState(0);
-
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const { accessToken } = useAuthToken();
 
   useEffect(() => {
@@ -83,7 +84,11 @@ const Profile = () => {
         if (response.ok) {
           const data = await response.json();
           setName(data.name);
-          console.log("Profile updated successfully");
+          setShowSuccessPopup(true); // Show the success popup
+          setTimeout(() => {
+            setShowSuccessPopup(false);
+            navigate("/");
+          }, 3000);
         }
       } catch (error) {
         console.error("Error updating profile:", error);
@@ -98,7 +103,7 @@ const Profile = () => {
         cartCount={cartCount}
         loginWithRedirect={loginWithRedirect} 
         logout={logout} 
-        user={user}
+        name={name}
       />
       
       {/* header */}
@@ -131,6 +136,11 @@ const Profile = () => {
             </div>
           </div>
         </section>
+        {showSuccessPopup && (
+          <div className="success-popup">
+            Profile updated successfully!
+          </div>
+        )}
       </div>
     </div>
   );
