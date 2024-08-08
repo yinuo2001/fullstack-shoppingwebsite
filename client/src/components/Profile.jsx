@@ -9,12 +9,12 @@ import "../css/Profile.css";
 const Profile = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout, loginWithRedirect } = useAuth0();
+  const { accessToken } = useAuthToken();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [location, setLocation] = useState("Loading location...");
   const [cartCount, setCartCount] = useState(0);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  const { accessToken } = useAuthToken();
 
   useEffect(() => {
     const fetchLocation = async () => {
