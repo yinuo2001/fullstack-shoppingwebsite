@@ -8,7 +8,6 @@ import "../css/Profile.css";
 
 const Profile = () => {
   const { user, isAuthenticated, logout, loginWithRedirect } = useAuth0();
-  //const [profile, setProfile] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [location, setLocation] = useState("Loading location...");
@@ -54,7 +53,6 @@ const Profile = () => {
 
           if (response.ok) {
             const data = await response.json();
-            //setProfile(data);
             setName(data.name);
             setEmail(data.email);
           }
