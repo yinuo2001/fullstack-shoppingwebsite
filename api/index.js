@@ -159,7 +159,7 @@ app.put("/verify-user/products", requireAuth, async (req, res) => {
 // Auth0 users can update their user information
 app.put("/verify-user", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
-  const user = await prisma.user.findUnique({
+  var user = await prisma.user.findUnique({
     where: {
       auth0Id: auth0Id,
     },
@@ -204,9 +204,9 @@ app.post("/verify-user", requireAuth, async (req, res) => {
   } else {
     const newUser = await prisma.user.create({
       data: {
-        email,
-        auth0Id,
-        name,
+        email: email,
+        auth0Id: auth0Id,
+        name: name,
       },
     });
 
