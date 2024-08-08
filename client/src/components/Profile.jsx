@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useAuthToken } from "../AuthTokenContext";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Topbar from "./Topbar";
 import "../css/Profile.css";
 
 const Profile = () => {
-  const { user, isAuthenticated, loginWithRedirect } = useAuth0();
-  const [profile, setProfile] = useState(null);
+  const { user, isAuthenticated, logout, loginWithRedirect } = useAuth0();
+  //const [profile, setProfile] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [location, setLocation] = useState("Loading location...");
   const [cartCount, setCartCount] = useState(0);
+
+  const { accessToken } = useAuthToken();
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -39,12 +42,23 @@ const Profile = () => {
     };
 
     const fetchProfile = async () => {
-      if (isAuthenticated) {
+      if (user && isAuthenticated) {
         try {
-          const response = await axios.get('http://localhost:8000/verify-user');
-          setProfile(response.data);
-          setName(response.data.name);
-          setEmail(response.data.email);
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/verify-user`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            //setProfile(data);
+            setName(data.name);
+            setEmail(data.email);
+          }
+
         } catch (error) {
           console.error("Error fetching profile:", error);
         }
@@ -55,21 +69,17 @@ const Profile = () => {
 
     fetchLocation();
     fetchProfile();
-  }, [isAuthenticated, user.email, loginWithRedirect]);
-
-  const handleUpdateProfile = async () => {
-    try {
-      await axios.put('http://localhost:8000/verify-user', { name, email });
-      const response = await axios.get('http://localhost:8000/verify-user');
-      setProfile(response.data);
-    } catch (error) {
-      console.error("Error updating profile:", error);
-    }
-  };
+  }, [isAuthenticated, user?.email, loginWithRedirect]);
 
   return (
     <div>
-      <Topbar location={location} cartCount={cartCount} />
+      <Topbar
+        location={location}
+        cartCount={cartCount}
+        loginWithRedirect={loginWithRedirect} 
+        logout={logout} 
+        user={user}
+      />
       
       {/* header */}
       <header className="header">
@@ -85,18 +95,17 @@ const Profile = () => {
                 <label>Email:</label>
                 <input
                   type="text"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={email || ''}
+                  readOnly
                   required
                 />
                 <label>Name:</label>
                 <input
                   type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={name.split("@")[0] || ''}
+                  readOnly
                   required
                 />
-                <button className="button" onClick={handleUpdateProfile}>Update</button>
               </div>
             </div>
           </div>
