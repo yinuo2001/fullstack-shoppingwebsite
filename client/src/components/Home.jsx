@@ -2,17 +2,19 @@ import React, { useEffect, useState } from "react";
 import "../css/Home.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useAuthToken } from "../AuthTokenContext";
 import Topbar from "./Topbar";
 
 const Home = () => {
+  const { accessToken } = useAuthToken();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [products, setProducts] = useState(null);
+  // const [products, setProducts] = useState(null);
   const [cartCount, setCartCount] = useState(0);
   const { isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
   const [location, setLocation] = useState("Loading location...");
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const images = [
     "res/home-slider-01.webp",
@@ -54,9 +56,18 @@ const Home = () => {
         try {
           const response = await fetch(`${process.env.REACT_APP_API_URL}/products`);
           if (!response.ok) throw new Error('Network response was not ok.');
-          const data = await response.json();
-          setProducts(data);
-          setCartCount(data.length);
+          const userInformation = await fetch(`${process.env.REACT_APP_API_URL}/verify-user`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`,
+            },
+          });
+          if (!userInformation.ok) throw new Error('Network response was not ok.');
+          // const data = await response.json();
+          const userData = await userInformation.json();
+          // setProducts(data);
+          setCartCount(userData.products.length);
         } catch (error) {
           console.error('Error fetching products:', error);
         }
@@ -64,10 +75,10 @@ const Home = () => {
 
       fetchProducts();
     } else {
-      setProducts(null);
+      // setProducts(null);
       setCartCount(0);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, accessToken]);
 
   const handlePrev = () => {
     const newIndex = (currentIndex === 0) ? images.length - 1 : currentIndex - 1;
@@ -118,7 +129,6 @@ const Home = () => {
         </button>
       </div>
 
-
       {/* Footer */}
       <footer className="footer">
         <div className="footer-content">
@@ -130,10 +140,6 @@ const Home = () => {
           <p>&copy; 2024 Style Haven </p>
         </div>
       </footer>     
-
-  
-
-
     </div>
   );
 }
