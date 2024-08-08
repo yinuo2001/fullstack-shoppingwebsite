@@ -69,6 +69,28 @@ const Profile = () => {
     fetchProfile();
   }, [isAuthenticated, user?.email, loginWithRedirect]);
 
+  const handleUpdateProfile = async () => {
+    if (name) {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/verify-user`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({ name }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setName(data.name);
+          console.log("Profile updated successfully");
+        }
+      } catch (error) {
+        console.error("Error updating profile:", error);
+      }
+    }
+  }
+
   return (
     <div>
       <Topbar
@@ -101,9 +123,10 @@ const Profile = () => {
                 <input
                   type="text"
                   value={name.split("@")[0] || ''}
-                  readOnly
+                  onChange={(e) => setName(e.target.value)}
                   required
                 />
+                <button className="button" onClick={handleUpdateProfile}>Update</button>
               </div>
             </div>
           </div>
