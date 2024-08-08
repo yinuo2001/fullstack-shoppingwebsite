@@ -1,13 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useAuthToken } from "../AuthTokenContext";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../css/Topbar.css';
 
-const Topbar = ({ location, cartCount, loginWithRedirect, logout, user }) => {
+const Topbar = ({ location, cartCount, loginWithRedirect, logout, name }) => {
   const { isAuthenticated } = useAuth0();
+  const { accessToken } = useAuthToken();
   const navigate = useNavigate();
   const [profileOpen, setProfileOpen] = useState(false);
+  const [userName, setUserName] = useState(name); // Get the user name from the user object and split it at the '@' symbol
+
+  useEffect(() => {
+    const getUserName = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/verify-user`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUserName(data.name);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    }
+    if (isAuthenticated) {
+      getUserName();
+    }
+  }, [isAuthenticated, accessToken, loginWithRedirect]);
+
 
   const handleShoppingBagClick = () => {
     if (isAuthenticated) {
@@ -45,7 +73,7 @@ const Topbar = ({ location, cartCount, loginWithRedirect, logout, user }) => {
                 </button>
                 {profileOpen && (
                   <div className="profile-menu">
-                    <span className="user-name">Hello, {user.name.split('@')[0]}</span>
+                    <span className="user-name">Hello, {userName}</span>
                     <Link to="/profile" className="profile-link" onClick={() => setProfileOpen(false)}>
                     <i className="fa-sharp fa-regular fa-user profile-icon"></i> My Profile</Link>
                     <button className="logout-btn" onClick={handleLogout}>
