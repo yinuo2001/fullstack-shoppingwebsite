@@ -16,6 +16,7 @@ import { AuthTokenProvider } from "./AuthTokenContext";
 function App() {
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     setIsLoggedIn(isAuthenticated);
@@ -29,6 +30,7 @@ function App() {
           productId: product.id,
         });
         if (response.status === 200) {
+          setCartCount(cartCount + 1);
           console.log(`Product added to cart: ${product.name}`);
         } else {
           console.error('Failed to add product to cart:', response.status);
@@ -60,7 +62,12 @@ function App() {
             <Route path="/jewelry-products" element={<JewelryList />} />
             <Route 
               path="/products/:id" 
-              element={<ProductDetails isLoggedIn={isLoggedIn} addToCart={addToCart} />} 
+              element={<ProductDetails
+                isLoggedIn={isLoggedIn}
+                addToCart={addToCart}
+                cartCount={cartCount}
+                setCartCount={setCartCount}
+                />} 
             />
             <Route path="/comment" element={<Comment />} />
             <Route path="/shopping-cart" element={<ShoppingCart />} />
