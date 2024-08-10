@@ -36,7 +36,7 @@ const JewelryList = () => {
 
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/products');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/products`);
         const filteredProducts = response.data.filter(product => product.id >= 13);
         setProducts(filteredProducts);
       } catch (error) {

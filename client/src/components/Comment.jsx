@@ -12,7 +12,7 @@ const Comments = () => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/comments`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/comments`);
         setComments(response.data);
       } catch (error) {
         console.error("Error fetching comments:", error);
@@ -25,9 +25,13 @@ const Comments = () => {
   const handlePostComment = async () => {
     if (isAuthenticated) {
       try {
-        await axios.post(`http://localhost:8000/comments`, { text: newComment });
+        await axios.post(`${process.env.REACT_APP_API_URL}/comments`, {
+          text: newComment,
+          userId: user.sub,
+          username: user.name || user.nickname,
+        });
         setNewComment("");
-        const response = await axios.get(`http://localhost:8000/comments`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/comments`);
         setComments(response.data);
       } catch (error) {
         console.error("Error posting comment:", error);
@@ -41,8 +45,8 @@ const Comments = () => {
   const handleDeleteComment = async (commentId) => {
     if (isAuthenticated) {
       try {
-        await axios.delete(`http://localhost:8000/comments/${commentId}`);
-        const response = await axios.get(`http://localhost:8000/comments`);
+        await axios.delete(`${process.env.REACT_APP_API_URL}/comments/${commentId}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/comments`);
         setComments(response.data);
       } catch (error) {
         console.error("Error deleting comment:", error);
