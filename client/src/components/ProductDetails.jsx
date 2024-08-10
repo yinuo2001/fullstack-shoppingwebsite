@@ -52,7 +52,7 @@ const ProductDetails = ({ isLoggedIn, addToCart, cartCount, setCartCount }) => {
     if (isLoggedIn) {
       try {
         await addToCart(product);
-        setCartCount(cartCount + 1);
+        setCartCount(prevCount => prevCount + 1);
       } catch (error) {
         console.error('Error adding item to cart:', error);
       }
