@@ -48,36 +48,36 @@ const Home = () => {
       }
     };
 
-    fetchLocation();
-
-
-    if (isAuthenticated) {
-      const fetchProducts = async () => {
+    const fetchCart = async () => {
+      if (isAuthenticated) {
         try {
-          const response = await fetch(`${process.env.REACT_APP_API_URL}/products`);
-          if (!response.ok) throw new Error('Network response was not ok.');
-          const userInformation = await fetch(`${process.env.REACT_APP_API_URL}/verify-user`, {
+          if (!accessToken) return;
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/verify-user/products`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${accessToken}`,
+              Authorization: `Bearer ${accessToken}`,
             },
           });
-          if (!userInformation.ok) throw new Error('Network response was not ok.');
-          // const data = await response.json();
-          const userData = await userInformation.json();
-          // setProducts(data);
-          setCartCount(userData.products.length);
-        } catch (error) {
-          console.error('Error fetching products:', error);
-        }
-      };
 
-      fetchProducts();
-    } else {
-      // setProducts(null);
-      setCartCount(0);
-    }
+          if (response.ok) {
+            const text = await response.text();
+            if (text) {
+              const data = JSON.parse(text);
+              setCartCount(data.products.length);
+            } else {
+              setCartCount(0);
+            }
+          }
+
+        } catch (error) {
+          console.error("Error fetching cart:", error);
+        }
+      }
+    };
+
+    fetchLocation();
+    fetchCart();
   }, [isAuthenticated, accessToken]);
 
   const handlePrev = () => {
@@ -120,7 +120,7 @@ const Home = () => {
         <ul className="slider" style={{ transform: `translateX(${-currentIndex * 100}%)` }}>
           {images.map((image, index) => (
             <li key={index}>
-              <a href="#"><img src={image} alt={`Slider Image ${index + 1}`} /></a>
+              <img src={image} alt="stylish models" />
             </li>
           ))}
         </ul>
