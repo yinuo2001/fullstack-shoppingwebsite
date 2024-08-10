@@ -63,7 +63,7 @@ app.get("/comments", async (req, res) => {
 
 // Auth0 users can add a comment
 app.post("/comments", requireAuth, async (req, res) => {
-  const { text, email } = req.body;
+  const { text, email, userName } = req.body;
   const user = await prisma.user.findUnique({
     where: {
       email: email,
@@ -76,6 +76,7 @@ app.post("/comments", requireAuth, async (req, res) => {
     data: {
       userId: user.id,
       text,
+      userName
     },
   });
   res.json(comment);
