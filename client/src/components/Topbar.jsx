@@ -15,6 +15,7 @@ const Topbar = ({ location, cartCount, loginWithRedirect, logout, name }) => {
   useEffect(() => {
     const getUserName = async () => {
       try {
+        if (!accessToken) return;
         const response = await fetch(`${process.env.REACT_APP_API_URL}/verify-user`, {
           method: 'GET',
           headers: {
@@ -25,7 +26,7 @@ const Topbar = ({ location, cartCount, loginWithRedirect, logout, name }) => {
 
         if (response.ok) {
           const data = await response.json();
-          setUserName(data.name);
+          setUserName(data.name.split("@")[0]);
         }
       } catch (error) {
         console.error('Error fetching user data:', error);

@@ -36,6 +36,7 @@ model Comment {
   id        Int      @id @default(autoincrement())
   userId    Int
   text      String   @db.Text
+  userName  String   @db.VarChar(255)
   User      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }

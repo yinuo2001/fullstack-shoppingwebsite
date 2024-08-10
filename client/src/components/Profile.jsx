@@ -66,8 +66,36 @@ const Profile = () => {
       }
     };
 
+    const fetchCart = async () => {
+      if (isAuthenticated) {
+        try {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/verify-user/products`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+
+          if (response.ok) {
+            const text = await response.text();
+            if (text) {
+              const data = JSON.parse(text);
+              setCartCount(data.products.length);
+            } else {
+              setCartCount(0);
+            }
+          }
+
+        } catch (error) {
+          console.error("Error fetching cart:", error);
+        }
+      }
+    }
+
     fetchLocation();
     fetchProfile();
+    fetchCart();
   }, [isAuthenticated, user?.email, loginWithRedirect]);
 
   const handleUpdateProfile = async () => {
