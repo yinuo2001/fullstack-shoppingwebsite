@@ -16,6 +16,7 @@ root.render(
         redirect_uri: `${window.location.origin}/verify-user`,
         audience: process.env.REACT_APP_AUTH0_AUDIENCE,
         scope: requestedScopes.join(" "),
+        prompt: "consent",
       }}
     >
       <AuthTokenProvider>
