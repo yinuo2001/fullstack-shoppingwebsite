@@ -12,6 +12,7 @@ const ProductDetails = ({  }) => {
   const [location, setLocation] = useState('Loading location...');
   const { loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
   const [cartCount, setCartCount] = useState(0);
+  const [ cartProducts, setCartProducts ] = useState([]);
   const { accessToken } = useAuthToken();
 
   useEffect(() => {
@@ -76,9 +77,11 @@ const ProductDetails = ({  }) => {
             if (text) {
               const data = JSON.parse(text);
               setCartCount(data.products.length);
+              setCartProducts(data.products.map(product => product.id));
             } else {
               console.log("text is empty");
               setCartCount(0);
+              setCartProducts([]);
             }
           }
 
@@ -94,7 +97,12 @@ const ProductDetails = ({  }) => {
   }, [id]);
 
   const handleAddToCart = async () => {
-    if (isAuthenticated) {  
+    if (isAuthenticated) {
+      if (cartProducts.includes(product.id)) {
+        alert('This product is already in your cart.');
+        return;
+      }
+
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/verify-user/products/${id}`, {
           method: 'PUT',
@@ -106,6 +114,7 @@ const ProductDetails = ({  }) => {
 
         if (response.ok) {
           setCartCount(cartCount + 1);
+          setCartProducts([...cartProducts, product.id]);
           console.log(`Product added to cart: ${product.name}`);
         } else {
           console.error('Failed to add product to cart:', response.status);
