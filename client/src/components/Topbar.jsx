@@ -6,6 +6,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../css/Topbar.css';
 
 const Topbar = ({ location, cartCount, loginWithRedirect, logout, name }) => {
+  
   const { isAuthenticated } = useAuth0();
   const { accessToken } = useAuthToken();
   const navigate = useNavigate();

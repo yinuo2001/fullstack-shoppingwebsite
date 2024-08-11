@@ -3,11 +3,16 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import "../css/FashionList.css";
 import Topbar from "./Topbar";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useAuthToken } from "../AuthTokenContext";
+
 
 const FashionList = () => {
+  const { accessToken } = useAuthToken();
   const [products, setProducts] = useState([]);
   const [location, setLocation] = useState("Loading location...");
   const [cartCount, setCartCount] = useState(0);
+  const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
 
 
   useEffect(() => {
@@ -35,8 +40,6 @@ const FashionList = () => {
       }
     };
 
-    fetchLocation();
-
     const fetchProducts = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/products`);
@@ -47,12 +50,47 @@ const FashionList = () => {
       }
     };
 
+    const fetchCart = async () => {
+      if (isAuthenticated) {
+        try {
+          if (!accessToken) return;
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/verify-user/products`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+
+          if (response.ok) {
+            const text = await response.text();
+            if (text) {
+              const data = JSON.parse(text);
+              setCartCount(data.products.length);
+            } else {
+              setCartCount(0);
+            }
+          }
+
+        } catch (error) {
+          console.error("Error fetching cart:", error);
+        }
+      }
+    };
+
+    fetchLocation();
     fetchProducts();
+    fetchCart();
   }, []);
 
   return (
     <div className="fashion-list">
-      <Topbar location={location} cartCount={cartCount} />
+      <Topbar 
+        location={location} 
+        cartCount={cartCount}
+        loginWithRedirect={loginWithRedirect} 
+        logout={logout} 
+        user={user} />
       
       {/* header */}
       <header className="header">

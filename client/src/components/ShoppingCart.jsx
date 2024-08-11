@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Topbar from "./Topbar";
+import { useAuthToken } from "../AuthTokenContext";
 import "../css/ShoppingCart.css";
 
 
@@ -9,6 +10,7 @@ const ShoppingCart = ({ cartItems, setCartItems }) => {
   const [products, setProducts] = useState([]);
   const [location, setLocation] = useState("Loading location...");
   const [cartCount, setCartCount] = useState(0);
+  const { accessToken } = useAuthToken();
 
   // Fetch location data
   useEffect(() => {
@@ -41,22 +43,42 @@ const ShoppingCart = ({ cartItems, setCartItems }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/verify-user/products');
-        const cartProducts = response.data.filter(product => cartItems.includes(product.id));
-        setProducts(cartProducts);
-        setCartCount(cartItems.length);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/verify-user/products`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        if (response.ok) {
+          const cartProducts = response.data;
+          setProducts(cartProducts);
+          setCartCount(cartItems.length);
+        } else {
+          console.error("Error fetching products in the cart:", response.status);
+        }
       } catch (error) {
         console.error("Error fetching products in the cart:", error);
       }
     };
     fetchProducts();
-  }, [cartItems]);
+  }, [cartItems, accessToken]);
 
   // Handle remove product from cart
   const handleRemoveProduct = async (productId) => {
     try {
-      await axios.post('http://localhost:8000/verify-user/remove-from-cart', { productId });
-      setCartItems(cartItems.filter(id => id !== productId));
+      // await axios.post('http://localhost:8000/verify-user/remove-from-cart', { productId });
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/verify-user/products/${productId}}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (response.ok) {
+        setCartCount(cartCount - 1);
+        setCartItems(cartItems.filter(id => id !== productId));
+      }
     } catch (error) {
       console.error("Error removing product from the cart:", error);
     }

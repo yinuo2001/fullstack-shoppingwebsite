@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import axios from 'axios';
+// import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
+// import { useAuthToken } from "./AuthTokenContext";
 import Home from "./components/Home";
 import VerifyUser from "./components/VerifyUser";
 import Profile from "./components/Profile";
@@ -14,36 +14,14 @@ import AuthDebugger from "./components/AuthDebugger";
 import { AuthTokenProvider } from "./AuthTokenContext";
 
 function App() {
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
+  // const { isAuthenticated } = useAuth0();
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [cartCount, setCartCount] = useState(0);
+  // const { accessToken } = useAuthToken();
 
-  useEffect(() => {
-    setIsLoggedIn(isAuthenticated);
-  }, [isAuthenticated]);
-
-  const addToCart = async (product) => {
-    if (isLoggedIn) {
-      try {
-        // Add product to cart
-        const response = await axios.put('http://localhost:8000/verify-user/products', {
-          productId: product.id,
-        });
-        if (response.status === 200) {
-          setCartCount(cartCount + 1);
-          console.log(`Product added to cart: ${product.name}`);
-        } else {
-          console.error('Failed to add product to cart:', response.status);
-          alert('Failed to add item to cart. Please try again.');
-        }
-      } catch (error) {
-        console.error('Error adding product to cart:', error);
-      }
-    } else {
-      alert('Please log in to add items to the cart.');
-      loginWithRedirect();
-    }
-  };
+  // useEffect(() => {
+  //   setIsLoggedIn(isAuthenticated);
+  // }, [isAuthenticated]);
 
   return (
     <Auth0Provider
@@ -62,13 +40,7 @@ function App() {
             <Route path="/jewelry-products" element={<JewelryList />} />
             <Route 
               path="/products/:id" 
-              element={<ProductDetails
-                isLoggedIn={isLoggedIn}
-                addToCart={addToCart}
-                cartCount={cartCount}
-                setCartCount={setCartCount}
-                />} 
-            />
+              element={<ProductDetails />} />
             <Route path="/comment" element={<Comment />} />
             <Route path="/shopping-cart" element={<ShoppingCart />} />
             <Route path="/auth-debugger" element={<AuthDebugger />} />

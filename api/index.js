@@ -89,7 +89,7 @@ app.delete("/comments/:id", requireAuth, async (req, res) => {
 
   const comment = prisma.comment.findUnique({
     where: {
-      id: parseInt(id),
+      id: parseInt(id, 10),
     },
   });
   if (!comment) {
@@ -107,7 +107,7 @@ app.delete("/comments/:id", requireAuth, async (req, res) => {
 
   await prisma.comment.delete({
     where: {
-      id: parseInt(id),
+      id: parseInt(id, 10),
     },
   });
   res.json({ message: "Comment deleted" });
@@ -134,8 +134,12 @@ app.get("/verify-user/products", requireAuth, async (req, res) => {
     where: {
       auth0Id: auth0Id,
     },
+    include: {
+      products: true,
+    },
   });
-  res.json(user.products);
+
+  res.json(user);
 });
 
 // Auth0 users can remove a product from their shopping cart
@@ -149,12 +153,12 @@ app.delete("verify-user/products/:id", requireAuth, async (req, res) => {
     data: {
       products: {
         disconnect: {
-          id: productId
+          id: parseInt(productId, 10),
         }
       }
     }
   });
-  res.json(user);
+  res.json(user.products);
 });
 
 // Auth0 users can remove all products from their shopping cart
@@ -174,9 +178,9 @@ app.delete("/verify-user/products", requireAuth, async (req, res) => {
 });
 
 // Auth0 users can add a product to their shopping cart
-app.put("/verify-user/products", requireAuth, async (req, res) => {
+app.put("/verify-user/products/:id", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
-  const { productId } = req.body;
+  const { id } = req.params;
   const user = await prisma.user.update({
     where: {
       auth0Id: auth0Id,
@@ -184,12 +188,12 @@ app.put("/verify-user/products", requireAuth, async (req, res) => {
     data: {
       products: {
         connect: {
-          id: productId
+          id: parseInt(id, 10),
         }
       }
     }
   });
-  res.json(user);
+  res.json(user.products);
 });
 
 // Auth0 users can update their user information

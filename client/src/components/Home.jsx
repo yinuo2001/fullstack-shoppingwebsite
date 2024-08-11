@@ -63,7 +63,10 @@ const Home = () => {
           if (response.ok) {
             const text = await response.text();
             if (text) {
+              
               const data = JSON.parse(text);
+              console.log(data);
+              console.log(data.products);
               setCartCount(data.products.length);
             } else {
               setCartCount(0);
