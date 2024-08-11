@@ -139,13 +139,13 @@ app.get("/verify-user/products", requireAuth, async (req, res) => {
     },
   });
 
-  res.json(user);
+  res.json(user.products);
 });
 
 // Auth0 users can remove a product from their shopping cart
-app.delete("verify-user/products/:id", requireAuth, async (req, res) => {
+app.delete("/verify-user/products/:id", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
-  const { productId } = req.params;
+  const { id } = req.params;
   const user = await prisma.user.update({
     where: {
       auth0Id: auth0Id,
@@ -153,7 +153,7 @@ app.delete("verify-user/products/:id", requireAuth, async (req, res) => {
     data: {
       products: {
         disconnect: {
-          id: parseInt(productId, 10),
+          id: parseInt(id, 10),
         }
       }
     }
