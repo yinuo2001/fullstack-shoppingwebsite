@@ -138,6 +138,41 @@ app.get("/verify-user/products", requireAuth, async (req, res) => {
   res.json(user.products);
 });
 
+// Auth0 users can remove a product from their shopping cart
+app.delete("verify-user/products/:id", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
+  const { productId } = req.params;
+  const user = await prisma.user.update({
+    where: {
+      auth0Id: auth0Id,
+    },
+    data: {
+      products: {
+        disconnect: {
+          id: productId
+        }
+      }
+    }
+  });
+  res.json(user);
+});
+
+// Auth0 users can remove all products from their shopping cart
+app.delete("/verify-user/products", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
+  const user = await prisma.user.update({
+    where: {
+      auth0Id: auth0Id,
+    },
+    data: {
+      products: {
+        set: []
+      }
+    }
+  });
+  res.json(user);
+});
+
 // Auth0 users can add a product to their shopping cart
 app.put("/verify-user/products", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
