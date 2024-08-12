@@ -14,8 +14,9 @@ const requireAuth = auth({
 });
 
 const app = express();
+const cors = require('cors');
 
-app.use(cors());
+app.use(cors({ origin: 'https://cs-5610-assignment-03-ttteam-1.onrender.com' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan("dev"));
