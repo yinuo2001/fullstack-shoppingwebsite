@@ -254,7 +254,7 @@ app.post("/verify-user", requireAuth, async (req, res) => {
   }
 });
 
-const PORT = parseInt(process.env.PORT) || 8080;
+const PORT = parseInt(process.env.PORT) || 5432;
 app.listen(PORT, () => {
  console.log(`Server running on http://localhost:${PORT} 🎉 🚀`);
 });
